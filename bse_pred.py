@@ -2,12 +2,9 @@ import numpy as np
 from sklearn.externals import joblib
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
-plt.style.use('fivethirtyeight')
 import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout
-import lime
-import lime.lime_tabular
 from keras.models import load_model
 import shap
 
