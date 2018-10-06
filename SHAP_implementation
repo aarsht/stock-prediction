@@ -1,0 +1,34 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+from keras.models import load_model
+import shap
+
+regressor = load_model('lstm_stock.h5')
+pred_x = regressor.predict_classes(X_train)
+random_ind = np.random.choice(X_train.shape[0], 1000, replace=False)
+print(random_ind)
+data = X_train[random_ind[0:500]]
+e = shap.DeepExplainer((regressor.layers[0].input, regressor.layers[-1].output),data)
+test1 = X_train[random_ind[500:1000]]
+shap_val = e.shap_values(test1)
+shap_val = np.array(shap_val)
+shap_val = np.reshape(shap_val,(int(shap_val.shape[1]),int(shap_val.shape[2]),int(shap_val.shape[3])))
+shap_abs = np.absolute(shap_val)
+sum_0 = np.sum(shap_abs,axis=0)
+f_names = ['RSI_14D','STOK','STOD','ROC','Momentum','CCI','ADX','MACD','Money_Flow_Index','WillR','INRchange']
+x_pos = [i for i, _ in enumerate(f_names)]
+x_pos = x_pos
+print(x_pos)
+plt1 = plt.subplot(311)
+plt1.barh(x_pos,sum_0[1])
+plt1.set_yticks(x_pos)
+plt1.set_yticklabels(f_names)
+plt1.set_title("Yesterday's features (time-step 2)")
+plt2 = plt.subplot(312,sharex=plt1)
+plt2.barh(x_pos,sum_0[0])
+plt2.set_yticks(x_pos)
+plt2.set_yticklabels(f_names)
+plt2.set_title("The day before yesterday's features(time-step 1)")
+plt.tight_layout()
+plt.show()
